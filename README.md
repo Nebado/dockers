@@ -1,12 +1,13 @@
 # Dockers
 
-The repository contains my docker configuration for developement.
+The repository contains my docker configurations for developement.
 
-# Requirements
+## Requirements
 
 - docker
+- docker-compose
 
-# Commands
+## Commands (Dockerfile)
 
 - php
 
@@ -20,5 +21,14 @@ $ docker network create -d bridge php-app-network (Create network bridge)
 $ docker run -d -v $(pwd)/.data/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=secret --network=php-app-network --name=mysql mysql:5.7.24 (Run volume mysql container)
 $ docker exec -it mysql bash (Enter mysql container)
 $ docker run -d -p 8080:80 -v $(pwd)/app:/var/www/app --network=php-app-network --name=php-app-container php-app (Run php container with mysql container through network bridge)
+
+```
+
+## Commands (Docker Compose)
+
+```console
+
+$ docker-compose up -d --build
+$ docker-compose down
 
 ```
