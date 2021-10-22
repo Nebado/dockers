@@ -1,0 +1,60 @@
+version: '3'
+
+networks:
+  wordpress:
+
+services:
+  site:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./app:/var/www/html:delegated
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - wordpress
+
+  mysql:
+    image: mysql:5.7.29
+    container_name: mysql-wp
+    restart: always
+    ports:
+      - 5306:3306
+    environment:
+      MYSQL_DATABASE: wp
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - wordpress
+
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: php
+    volumes:
+      - ./app:/var/www/html:delegated
+    networks:
+      - wordpress
+
+  wp:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: wp
+    entrypoint: ['wp', '--allow-root']
+    volumes:
+      - ./app:/var/www/html:delegated
+    networks:
+      - wordpress
